@@ -3,7 +3,7 @@ package db
 import (
 	"github.com/jmoiron/sqlx"
 	"github.com/go-sql-driver/mysql"
-	"github.com/xnoteapp/app/common"
+	"github.com/abdulgalimov/xnote/common"
 	"time"
 )
 

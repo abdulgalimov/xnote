@@ -4,7 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
-	"github.com/xnoteapp/app/common"
+	"github.com/abdulgalimov/xnote/common"
 	"time"
 )
 

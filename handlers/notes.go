@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/xnoteapp/app/common"
+	"github.com/abdulgalimov/xnote/common"
 )
 
 func NotesList(ctx common.Context, xdb common.Db) {

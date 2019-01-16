@@ -2,7 +2,7 @@ package web
 
 import (
 	"encoding/json"
-	"github.com/xnoteapp/app/common"
+	"github.com/abdulgalimov/xnote/common"
 	"net/http"
 )
 

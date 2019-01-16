@@ -1,15 +1,15 @@
-package app
+package xnote
 
 import (
 	"fmt"
-	"github.com/xnoteapp/app/common"
-	"github.com/xnoteapp/app/db"
-	"github.com/xnoteapp/app/handlers"
-	"github.com/xnoteapp/app/web"
+	"github.com/abdulgalimov/xnote/common"
+	"github.com/abdulgalimov/xnote/db"
+	"github.com/abdulgalimov/xnote/handlers"
+	"github.com/abdulgalimov/xnote/web"
 )
 
 func Start() {
-	fmt.Println("run app")
+	fmt.Println("run xnote")
 	var dbConfig common.DbConnectConfig
 	dbConfig.Host = "localhost"
 	dbConfig.Port = 3306

@@ -1,7 +1,7 @@
 package web
 
 import (
-	"github.com/xnoteapp/app/common"
+	"github.com/abdulgalimov/xnote/common"
 	"strconv"
 )
 

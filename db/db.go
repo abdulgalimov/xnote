@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"github.com/xnoteapp/app/common"
+	"github.com/abdulgalimov/xnote/common"
 	// драйвер для sqlx
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
