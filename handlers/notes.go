@@ -5,7 +5,18 @@ import (
 )
 
 func NotesList(ctx common.Context, xdb common.Db) {
-	notesList, count, err := xdb.Notes().FindAll(ctx.GetUserID(), ctx.GetCountOnPage(), ctx.GetPageNum())
+	var notesList []*common.Note
+	var count int
+	var err error
+	countOnPage := ctx.GetCountOnPage()
+	if countOnPage == 0 {
+		notesList, err = xdb.Notes().FindAll(ctx.GetUserID())
+		if err == nil {
+			count = len(notesList)
+		}
+	} else {
+		notesList, count, err = xdb.Notes().FindPage(ctx.GetUserID(), countOnPage, ctx.GetPageNum())
+	}
 	if err != nil {
 		ctx.SetError(common.SystemError)
 		return

@@ -81,7 +81,8 @@ type DbUsers interface {
 
 // DbNotes интерфейс БД для работы с таблицей notes
 type DbNotes interface {
-	FindAll(userID int, countOnPage int, pageNum int) ([]*Note, int, error)
+	FindAll(userID int) ([]*Note, error)
+	FindPage(userID int, countOnPage int, pageNum int) ([]*Note, int, error)
 	Find(noteID int) (*Note, error)
 	Create(userID int, text string) (*Note, error)
 	Delete(noteID int) error

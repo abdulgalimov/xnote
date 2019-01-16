@@ -1,10 +1,9 @@
 package db
 
 import (
-	"fmt"
-	"github.com/jmoiron/sqlx"
 	"github.com/abdulgalimov/xnote/common"
 	"github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"time"
 )
 
@@ -43,23 +42,32 @@ type dbNotes struct {
 	instance *sqlx.DB
 }
 
-func (n *dbNotes) FindAll(userID int, countOnPage int, pageNum int) ([]*common.Note, int, error) {
+func (n *dbNotes) FindAll(userID int) ([]*common.Note, error) {
 	notesInner := make([]*noteInner, 0)
 	var err error
+	err = n.instance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=?;`, userID)
+	if err != nil {
+		return nil, err
+	}
+	//
+	var notes []*common.Note
+	for _, noteIn := range notesInner {
+		notes = append(notes, noteIn.note())
+	}
+	return notes, nil
+}
+
+func (n *dbNotes) FindPage(userID int, countOnPage int, pageNum int) ([]*common.Note, int, error) {
+	notesInner := make([]*noteInner, 0)
+	err := n.instance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=? LIMIT ? OFFSET ?;`, userID, countOnPage, pageNum*countOnPage)
+	if err != nil {
+		return nil, 0, err
+	}
+	//
 	var count int
-	if countOnPage == 0 {
-		err = n.instance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=?;`, userID)
-		if err != nil {
-			return nil, 0, err
-		}
-		count = len(notesInner)
-	} else {
-		err = n.instance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=? LIMIT ? OFFSET ?;`, userID, countOnPage, pageNum*countOnPage)
-		if err != nil {
-			return nil, 0, err
-		}
-		err := n.instance.QueryRow(`SELECT COUNT(*) as count FROM notes WHERE user_id=? ;`, userID).Scan(&count)
-		fmt.Println("res", count, err)
+	err = n.instance.QueryRow(`SELECT COUNT(*) as count FROM notes WHERE user_id=? ;`, userID).Scan(&count)
+	if err != nil {
+		return nil, 0, err
 	}
 	//
 	var notes []*common.Note
