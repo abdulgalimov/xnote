@@ -7,10 +7,6 @@ import (
 	"xnote/db"
 )
 
-func Create() error {
-	return nil
-}
-
 func Start() {
 	var dbConfig core.DbConnectConfig
 	dbConfig.Host = "localhost"
