@@ -9,7 +9,7 @@ type CmdCode int
 
 // Коды событий приложения
 const (
-	NotesListCmd	CmdCode = iota+1
+	NotesListCmd CmdCode = iota + 1
 	CreateNoteCmd
 	DeleteNoteCmd
 	GetNoteCmd
@@ -20,10 +20,9 @@ const (
 // ErrorCode код ошибки приложения
 type ErrorCode int
 
-
 // коды ошибок приложения
 const (
-	SystemError		ErrorCode = iota-2000
+	SystemError ErrorCode = iota - 2000
 	NotFoundError
 	AccessError
 	DuplicateError

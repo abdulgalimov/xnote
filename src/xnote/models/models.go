@@ -15,7 +15,6 @@ type User struct {
 	CreatedAt  *time.Time `json:"created_at"`
 }
 
-
 // Token структура токена, требуется для подписи запросов клиента
 type Token struct {
 	ID        int        `json:"id"`
