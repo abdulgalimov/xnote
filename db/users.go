@@ -1,8 +1,9 @@
 package db
 
 import (
-	"github.com/abdulgalimov/xnote/models"
+	"github.com/jmoiron/sqlx"
 	"github.com/go-sql-driver/mysql"
+	"github.com/xnoteapp/app/common"
 	"time"
 )
 
@@ -28,8 +29,8 @@ type userInner struct {
 	CreatedAt  mysql.NullTime `db:"created_at"`
 }
 
-func (u *userInner) user() *models.User {
-	return &models.User{
+func (u *userInner) user() *common.User {
+	return &common.User{
 		ID:         u.ID,
 		TelegramID: u.TelegramID,
 		Name:       u.Name,
@@ -41,35 +42,36 @@ func (u *userInner) user() *models.User {
 }
 
 type dbUsers struct {
+	instance *sqlx.DB
 }
 
-func (u *dbUsers) Find(userID int) (*models.User, error) {
+func (u *dbUsers) Find(userID int) (*common.User, error) {
 	var user userInner
-	err := dbInstance.Get(&user, `SELECT * FROM users WHERE id=? LIMIT 1;`, userID)
+	err := u.instance.Get(&user, `SELECT * FROM users WHERE id=? LIMIT 1;`, userID)
 	if err != nil {
 		return nil, err
 	}
 	return user.user(), nil
 }
-func (u *dbUsers) FindByTelegramID(telegramID int64) (*models.User, error) {
+func (u *dbUsers) FindByTelegramID(telegramID int64) (*common.User, error) {
 	var user userInner
-	err := dbInstance.Get(&user, `SELECT * FROM users WHERE telegram_id=? LIMIT 1;`, telegramID)
+	err := u.instance.Get(&user, `SELECT * FROM users WHERE telegram_id=? LIMIT 1;`, telegramID)
 	if err != nil {
 		return nil, err
 	}
 	return user.user(), nil
 }
-func (u *dbUsers) FindByEmail(email string) (*models.User, error) {
+func (u *dbUsers) FindByEmail(email string) (*common.User, error) {
 	var user userInner
-	err := dbInstance.Get(&user, `SELECT * FROM users WHERE email LIKE ? LIMIT 1;`, email)
+	err := u.instance.Get(&user, `SELECT * FROM users WHERE email LIKE ? LIMIT 1;`, email)
 	if err != nil {
 		return nil, err
 	}
 	return user.user(), nil
 }
-func (u *dbUsers) Create(src models.User) (*models.User, error) {
+func (u *dbUsers) Create(src common.User) (*common.User, error) {
 	query := `INSERT INTO users (telegram_id, name, username, email, password) VALUES(?, ?, ?, ?, ?);`
-	res, err := dbInstance.Exec(query, src.TelegramID, src.Name, src.Username, src.Email, src.Password)
+	res, err := u.instance.Exec(query, src.TelegramID, src.Name, src.Username, src.Email, src.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +82,7 @@ func (u *dbUsers) Create(src models.User) (*models.User, error) {
 	}
 	//
 	now := time.Now()
-	user := models.User{
+	user := common.User{
 		ID:         int(id),
 		TelegramID: src.TelegramID,
 		Name:       src.Name,

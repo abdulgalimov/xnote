@@ -1,22 +1,21 @@
-package app
+package handlers
 
 import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
-	"github.com/abdulgalimov/xnote/core"
-	"github.com/abdulgalimov/xnote/models"
+	"github.com/xnoteapp/app/common"
 	"time"
 )
 
-func userCreate(ctx core.Context) {
-	var userSrc models.User
+func UserCreate(ctx common.Context, xdb common.Db) {
+	var userSrc common.User
 	userSrc.Name = ctx.GetName()
 	if ctx.GetTelegramID() == 0 {
 		userSrc.Email = ctx.GetEmail()
 		userByEmail, _ := xdb.Users().FindByEmail(userSrc.Email)
 		if userByEmail != nil {
-			ctx.SetError(core.DuplicateError)
+			ctx.SetError(common.DuplicateError)
 			return
 		}
 
@@ -25,7 +24,7 @@ func userCreate(ctx core.Context) {
 		userSrc.TelegramID = ctx.GetTelegramID()
 		userByTelegramID, _ := xdb.Users().FindByTelegramID(userSrc.TelegramID)
 		if userByTelegramID != nil {
-			ctx.SetError(core.DuplicateError)
+			ctx.SetError(common.DuplicateError)
 			return
 		}
 
@@ -34,14 +33,14 @@ func userCreate(ctx core.Context) {
 
 	user, err := xdb.Users().Create(userSrc)
 	if err != nil || user == nil {
-		ctx.SetError(core.SystemError)
+		ctx.SetError(common.SystemError)
 		return
 	}
 	ctx.SetUser(user)
 
-	token, err := createToken(ctx, true)
+	token, err := createToken(ctx, xdb,true)
 	if err != nil || token == nil {
-		ctx.SetError(core.SystemError)
+		ctx.SetError(common.SystemError)
 		return
 	}
 	ctx.SetToken(token)
@@ -49,15 +48,15 @@ func userCreate(ctx core.Context) {
 	ctx.Complete()
 }
 
-func tokenGet(ctx core.Context) {
+func TokenGet(ctx common.Context, xdb common.Db) {
 	user := ctx.GetUser()
 	if user.Email != ctx.GetEmail() || user.Password != ctx.GetPassword() {
-		ctx.SetError(core.AccessError)
+		ctx.SetError(common.AccessError)
 		return
 	}
-	token, err := createToken(ctx, false)
+	token, err := createToken(ctx, xdb,false)
 	if err != nil || token == nil {
-		ctx.SetError(core.SystemError)
+		ctx.SetError(common.SystemError)
 		return
 	}
 	ctx.SetToken(token)
@@ -65,7 +64,7 @@ func tokenGet(ctx core.Context) {
 	ctx.Complete()
 }
 
-func createToken(ctx core.Context, isNew bool) (*models.Token, error) {
+func createToken(ctx common.Context, xdb common.Db, isNew bool) (*common.Token, error) {
 	userID := ctx.GetUserID()
 	platform := ctx.GetPlatform()
 	deviceID := ctx.GetDeviceID()

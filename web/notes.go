@@ -1,12 +1,12 @@
-package api
+package web
 
 import (
-	"github.com/abdulgalimov/xnote/core"
+	"github.com/xnoteapp/app/common"
 	"strconv"
 )
 
 func notesList(ctx *context) {
-	ctx.cmdCode = core.NotesListCmd
+	ctx.cmdCode = common.NotesListCmd
 	ctx.text = ctx.GetParam("find_text")
 	parsePages(ctx)
 	dropContext(ctx)
@@ -30,7 +30,7 @@ func noteGet(ctx *context) {
 		ctx.SetError(errorInvalidNoteID)
 		return
 	}
-	ctx.cmdCode = core.GetNoteCmd
+	ctx.cmdCode = common.GetNoteCmd
 	ctx.noteID = noteID
 	dropContext(ctx)
 
@@ -45,7 +45,7 @@ func noteCreate(ctx *context) {
 		ctx.SetError(errorInvalidText)
 		return
 	}
-	ctx.cmdCode = core.CreateNoteCmd
+	ctx.cmdCode = common.CreateNoteCmd
 	ctx.text = text
 	dropContext(ctx)
 
@@ -61,7 +61,7 @@ func noteDelete(ctx *context) {
 		ctx.SetError(errorInvalidNoteID)
 		return
 	}
-	ctx.cmdCode = core.DeleteNoteCmd
+	ctx.cmdCode = common.DeleteNoteCmd
 	ctx.noteID = noteID
 	dropContext(ctx)
 

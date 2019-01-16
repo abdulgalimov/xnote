@@ -1,8 +1,4 @@
-package core
-
-import (
-	"github.com/abdulgalimov/xnote/models"
-)
+package common
 
 // CmdCode код события
 type CmdCode int
@@ -46,11 +42,11 @@ type Context interface {
 	GetCountOnPage() int
 
 	SetError(code ErrorCode)
-	SetUser(user *models.User)
-	GetUser() *models.User
-	SetNoteList(noteList []*models.Note, count int)
-	SetNote(note *models.Note)
-	SetToken(token *models.Token)
+	SetUser(user *User)
+	GetUser() *User
+	SetNoteList(noteList []*Note, count int)
+	SetNote(note *Note)
+	SetToken(token *Token)
 
 	Complete()
 }
@@ -77,24 +73,24 @@ type Db interface {
 
 // DbUsers интерфейс БД для работы с таблицей users
 type DbUsers interface {
-	Find(userID int) (*models.User, error)
-	FindByTelegramID(telegramID int64) (*models.User, error)
-	FindByEmail(email string) (*models.User, error)
-	Create(src models.User) (*models.User, error)
+	Find(userID int) (*User, error)
+	FindByTelegramID(telegramID int64) (*User, error)
+	FindByEmail(email string) (*User, error)
+	Create(src User) (*User, error)
 }
 
 // DbNotes интерфейс БД для работы с таблицей notes
 type DbNotes interface {
-	FindAll(userID int, countOnPage int, pageNum int) ([]*models.Note, int, error)
-	Find(noteID int) (*models.Note, error)
-	Create(userID int, text string) (*models.Note, error)
+	FindAll(userID int, countOnPage int, pageNum int) ([]*Note, int, error)
+	Find(noteID int) (*Note, error)
+	Create(userID int, text string) (*Note, error)
 	Delete(noteID int) error
 }
 
 // DbTokens интерфейс БД для работы с таблицей tokens
 type DbTokens interface {
-	FindByPlatform(userID int, platform string, deviceID string) *models.Token
+	FindByPlatform(userID int, platform string, deviceID string) *Token
 	Update(noteID int, value string)
-	FindByValue(value string) *models.Token
-	Create(userID int, platform string, deviceID string, value string) (*models.Token, error)
+	FindByValue(value string) *Token
+	Create(userID int, platform string, deviceID string, value string) (*Token, error)
 }

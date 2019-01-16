@@ -1,59 +1,59 @@
-package app
+package handlers
 
 import (
-	"github.com/abdulgalimov/xnote/core"
+	"github.com/xnoteapp/app/common"
 )
 
-func notesList(ctx core.Context) {
+func NotesList(ctx common.Context, xdb common.Db) {
 	notesList, count, err := xdb.Notes().FindAll(ctx.GetUserID(), ctx.GetCountOnPage(), ctx.GetPageNum())
 	if err != nil {
-		ctx.SetError(core.SystemError)
+		ctx.SetError(common.SystemError)
 		return
 	}
 	ctx.SetNoteList(notesList, count)
 	ctx.Complete()
 }
 
-func noteGet(ctx core.Context) {
+func NoteGet(ctx common.Context, xdb common.Db) {
 	noteID := ctx.GetNoteID()
 	noteModel, err := xdb.Notes().Find(noteID)
 	if err != nil || noteModel == nil {
-		ctx.SetError(core.NotFoundError)
+		ctx.SetError(common.NotFoundError)
 		return
 	}
 	if noteModel.UserID != ctx.GetUserID() {
-		ctx.SetError(core.NotFoundError)
+		ctx.SetError(common.NotFoundError)
 		return
 	}
 	ctx.SetNote(noteModel)
 	ctx.Complete()
 }
-func createNote(ctx core.Context) {
+func CreateNote(ctx common.Context, xdb common.Db) {
 	userID := ctx.GetUserID()
 	text := ctx.GetText()
 	noteModel, err := xdb.Notes().Create(userID, text)
 	if err != nil || noteModel == nil {
-		ctx.SetError(core.SystemError)
+		ctx.SetError(common.SystemError)
 		return
 	}
 	ctx.SetNote(noteModel)
 	ctx.Complete()
 }
 
-func deleteNote(ctx core.Context) {
+func DeleteNote(ctx common.Context, xdb common.Db) {
 	noteID := ctx.GetNoteID()
 	noteModel, err := xdb.Notes().Find(noteID)
 	if err != nil || noteModel == nil {
-		ctx.SetError(core.NotFoundError)
+		ctx.SetError(common.NotFoundError)
 		return
 	}
 	if noteModel.UserID != ctx.GetUserID() {
-		ctx.SetError(core.NotFoundError)
+		ctx.SetError(common.NotFoundError)
 		return
 	}
 	err = xdb.Notes().Delete(noteID)
 	if err != nil {
-		ctx.SetError(core.SystemError)
+		ctx.SetError(common.SystemError)
 		return
 	}
 	ctx.Complete()

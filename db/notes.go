@@ -2,7 +2,8 @@ package db
 
 import (
 	"fmt"
-	"github.com/abdulgalimov/xnote/models"
+	"github.com/jmoiron/sqlx"
+	"github.com/xnoteapp/app/common"
 	"github.com/go-sql-driver/mysql"
 	"time"
 )
@@ -27,8 +28,8 @@ type noteInner struct {
 	CreatedAt mysql.NullTime `db:"created_at"`
 }
 
-func (n *noteInner) note() *models.Note {
-	return &models.Note{
+func (n *noteInner) note() *common.Note {
+	return &common.Note{
 		ID:        n.ID,
 		UserID:    n.UserID,
 		Text:      n.Text,
@@ -39,46 +40,47 @@ func (n *noteInner) note() *models.Note {
 }
 
 type dbNotes struct {
+	instance *sqlx.DB
 }
 
-func (n *dbNotes) FindAll(userID int, countOnPage int, pageNum int) ([]*models.Note, int, error) {
+func (n *dbNotes) FindAll(userID int, countOnPage int, pageNum int) ([]*common.Note, int, error) {
 	notesInner := make([]*noteInner, 0)
 	var err error
 	var count int
 	if countOnPage == 0 {
-		err = dbInstance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=?;`, userID)
+		err = n.instance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=?;`, userID)
 		if err != nil {
 			return nil, 0, err
 		}
 		count = len(notesInner)
 	} else {
-		err = dbInstance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=? LIMIT ? OFFSET ?;`, userID, countOnPage, pageNum*countOnPage)
+		err = n.instance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=? LIMIT ? OFFSET ?;`, userID, countOnPage, pageNum*countOnPage)
 		if err != nil {
 			return nil, 0, err
 		}
-		err := dbInstance.QueryRow(`SELECT COUNT(*) as count FROM notes WHERE user_id=? ;`, userID).Scan(&count)
+		err := n.instance.QueryRow(`SELECT COUNT(*) as count FROM notes WHERE user_id=? ;`, userID).Scan(&count)
 		fmt.Println("res", count, err)
 	}
 	//
-	var notes []*models.Note
+	var notes []*common.Note
 	for _, noteIn := range notesInner {
 		notes = append(notes, noteIn.note())
 	}
 	return notes, count, nil
 }
 
-func (n *dbNotes) Find(noteID int) (*models.Note, error) {
+func (n *dbNotes) Find(noteID int) (*common.Note, error) {
 	var note noteInner
-	err := dbInstance.Get(&note, `SELECT * FROM notes WHERE id=? LIMIT 1;`, noteID)
+	err := n.instance.Get(&note, `SELECT * FROM notes WHERE id=? LIMIT 1;`, noteID)
 	if err != nil {
 		return nil, err
 	}
 	return note.note(), nil
 }
 
-func (n *dbNotes) Create(userID int, text string) (*models.Note, error) {
+func (n *dbNotes) Create(userID int, text string) (*common.Note, error) {
 	query := `INSERT INTO notes (user_id, text) VALUES(?, ?);`
-	res, err := dbInstance.Exec(query, userID, text)
+	res, err := n.instance.Exec(query, userID, text)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +91,7 @@ func (n *dbNotes) Create(userID int, text string) (*models.Note, error) {
 	}
 	//
 	now := time.Now()
-	note := models.Note{
+	note := common.Note{
 		ID:        id,
 		UserID:    userID,
 		Text:      text,
@@ -102,6 +104,6 @@ func (n *dbNotes) Create(userID int, text string) (*models.Note, error) {
 
 func (n *dbNotes) Delete(noteID int) error {
 	query := `DELETE FROM notes WHERE id=?;`
-	_, err := dbInstance.Exec(query, noteID)
+	_, err := n.instance.Exec(query, noteID)
 	return err
 }

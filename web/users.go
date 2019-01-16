@@ -1,8 +1,7 @@
-package api
+package web
 
 import (
-	"github.com/abdulgalimov/xnote/core"
-	"github.com/abdulgalimov/xnote/models"
+	"github.com/xnoteapp/app/common"
 	"strconv"
 )
 
@@ -46,14 +45,14 @@ func userCreate(ctx *context) {
 		ctx.username = ctx.GetParam("username")
 	}
 
-	ctx.cmdCode = core.UserCreateCmd
+	ctx.cmdCode = common.UserCreateCmd
 	dropContext(ctx)
 
 	<-ctx.completeChan
 
 	ctx.AnswerData(struct {
-		User  *models.User  `json:"user"`
-		Token *models.Token `json:"token"`
+		User  *common.User  `json:"user"`
+		Token *common.Token `json:"token"`
 	}{
 		User:  ctx.user,
 		Token: ctx.token,
@@ -82,7 +81,7 @@ func userTokenGet(ctx *context) {
 		return
 	}
 
-	ctx.cmdCode = core.UserTokenGetCmd
+	ctx.cmdCode = common.UserTokenGetCmd
 	dropContext(ctx)
 
 	<-ctx.completeChan

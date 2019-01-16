@@ -1,9 +1,8 @@
-package api
+package web
 
 import (
 	"encoding/json"
-	"github.com/abdulgalimov/xnote/core"
-	"github.com/abdulgalimov/xnote/models"
+	"github.com/xnoteapp/app/common"
 	"net/http"
 )
 
@@ -12,7 +11,7 @@ type context struct {
 	req   *http.Request
 	reqID string
 
-	cmdCode    core.CmdCode
+	cmdCode    common.CmdCode
 	userID     int
 	text       string
 	noteID     int
@@ -29,11 +28,11 @@ type context struct {
 
 	errorCode int
 
-	user       *models.User
-	token      *models.Token
-	noteList   []*models.Note
+	user       *common.User
+	token      *common.Token
+	noteList   []*common.Note
 	notesCount int
-	note       *models.Note
+	note       *common.Note
 
 	completeChan chan bool
 }
@@ -42,7 +41,7 @@ func (ctx *context) GetParam(key string) string {
 	return ctx.req.URL.Query().Get(key)
 }
 
-func (ctx *context) GetCmdCode() core.CmdCode {
+func (ctx *context) GetCmdCode() common.CmdCode {
 	return ctx.cmdCode
 }
 func (ctx *context) GetUserID() int {
@@ -82,24 +81,24 @@ func (ctx *context) GetDeviceID() string {
 	return ctx.deviceID
 }
 
-func (ctx *context) SetError(code core.ErrorCode) {
+func (ctx *context) SetError(code common.ErrorCode) {
 	ctx.errorCode = int(code)
 	ctx.Complete()
 }
-func (ctx *context) SetUser(user *models.User) {
+func (ctx *context) SetUser(user *common.User) {
 	ctx.user = user
 }
-func (ctx *context) GetUser() *models.User {
+func (ctx *context) GetUser() *common.User {
 	return ctx.user
 }
-func (ctx *context) SetNoteList(noteList []*models.Note, count int) {
+func (ctx *context) SetNoteList(noteList []*common.Note, count int) {
 	ctx.noteList = noteList
 	ctx.notesCount = count
 }
-func (ctx *context) SetNote(note *models.Note) {
+func (ctx *context) SetNote(note *common.Note) {
 	ctx.note = note
 }
-func (ctx *context) SetToken(token *models.Token) {
+func (ctx *context) SetToken(token *common.Token) {
 	ctx.token = token
 }
 func (ctx *context) init() {
@@ -149,7 +148,7 @@ type result struct {
 }
 
 type pagesNoteData struct {
-	List        []*models.Note `json:"list"`
+	List        []*common.Note `json:"list"`
 	Count       int            `json:"count"`
 	PageNum     int            `json:"pageNum"`
 	CountOnPage int            `json:"countOnPage"`

@@ -1,8 +1,8 @@
-package api
+package web
 
 import (
 	"fmt"
-	"github.com/abdulgalimov/xnote/core"
+	"github.com/xnoteapp/app/common"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -23,15 +23,15 @@ const (
 	errorInvalidPassword
 )
 
-var channel core.ContextReader
+var channel common.ContextReader
 var resolver *httpResolver
 
-var xdb core.Db
+var xdb common.Db
 
 // Init инициализировать пакет
-func Init(db core.Db) {
+func Init(db common.Db) {
 	xdb = db
-	channel = make(core.ContextReader, 10)
+	channel = make(common.ContextReader, 10)
 	resolver = &httpResolver{
 		handlers: make(map[string]handlerFunc),
 		flags:    make(map[string]int),
@@ -46,7 +46,7 @@ func Init(db core.Db) {
 }
 
 // GetContextReader получить канал куда отправляются контексты
-func GetContextReader() core.ContextReader {
+func GetContextReader() common.ContextReader {
 	return channel
 }
 
