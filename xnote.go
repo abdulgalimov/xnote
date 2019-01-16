@@ -1,27 +1,12 @@
 package xnote
 
 import (
-	"fmt"
 	"github.com/abdulgalimov/xnote/common"
-	"github.com/abdulgalimov/xnote/db"
 	"github.com/abdulgalimov/xnote/handlers"
 	"github.com/abdulgalimov/xnote/web"
 )
 
-func Start() {
-	fmt.Println("run xnote")
-	var dbConfig common.DbConnectConfig
-	dbConfig.Host = "localhost"
-	dbConfig.Port = 3306
-	dbConfig.DriverName = "mysql"
-	dbConfig.UserName = "root"
-	dbConfig.Password = "123"
-	dbConfig.DbName = "xnote_dev"
-	xdb, err := db.Connect(dbConfig)
-	if err != nil {
-		panic(err)
-	}
-
+func Start(xdb common.Db) {
 	web.Init(xdb)
 	go web.Start()
 	readContext(web.GetContextReader(), xdb)
