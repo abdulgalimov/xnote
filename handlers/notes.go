@@ -4,6 +4,7 @@ import (
 	"github.com/abdulgalimov/xnote/common"
 )
 
+// NotesList загрузить список заметок
 func NotesList(ctx common.Context, xdb common.Db) {
 	var notesList []*common.Note
 	var count int
@@ -25,6 +26,7 @@ func NotesList(ctx common.Context, xdb common.Db) {
 	ctx.Complete()
 }
 
+// NoteGet получить заметку
 func NoteGet(ctx common.Context, xdb common.Db) {
 	noteID := ctx.GetNoteID()
 	noteModel, err := xdb.Notes().Find(noteID)
@@ -39,6 +41,8 @@ func NoteGet(ctx common.Context, xdb common.Db) {
 	ctx.SetNote(noteModel)
 	ctx.Complete()
 }
+
+// CreateNote создать заметку
 func CreateNote(ctx common.Context, xdb common.Db) {
 	userID := ctx.GetUserID()
 	text := ctx.GetText()
@@ -51,6 +55,7 @@ func CreateNote(ctx common.Context, xdb common.Db) {
 	ctx.Complete()
 }
 
+// DeleteNote удалить заметку
 func DeleteNote(ctx common.Context, xdb common.Db) {
 	noteID := ctx.GetNoteID()
 	noteModel, err := xdb.Notes().Find(noteID)

@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// UserCreate создать пользователя
 func UserCreate(ctx common.Context, xdb common.Db) {
 	var userSrc common.User
 	userSrc.Name = ctx.GetName()
@@ -48,6 +49,7 @@ func UserCreate(ctx common.Context, xdb common.Db) {
 	ctx.Complete()
 }
 
+// TokenGet получить новый токен юзера
 func TokenGet(ctx common.Context, xdb common.Db) {
 	user := ctx.GetUser()
 	if user.Email != ctx.GetEmail() || user.Password != ctx.GetPassword() {

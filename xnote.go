@@ -6,6 +6,7 @@ import (
 	"github.com/abdulgalimov/xnote/web"
 )
 
+// Start стартануть приложение
 func Start(xdb common.Db) {
 	web.Init(xdb)
 	go web.Start()
