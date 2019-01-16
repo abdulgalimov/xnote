@@ -3,8 +3,8 @@ package api
 import (
 	"encoding/json"
 	"net/http"
-	"xnote/core"
-	"xnote/models"
+	"github.com/abdulgalimov/xnote/core"
+	"github.com/abdulgalimov/xnote/models"
 )
 
 type context struct {

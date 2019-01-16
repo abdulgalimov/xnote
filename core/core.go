@@ -1,7 +1,7 @@
 package core
 
 import (
-	"xnote/models"
+	"github.com/abdulgalimov/xnote/models"
 )
 
 // CmdCode код события

@@ -1,10 +1,10 @@
 package xnote
 
 import (
-	"xnote/api"
-	"xnote/app"
-	"xnote/core"
-	"xnote/db"
+	"github.com/abdulgalimov/xnote/api"
+	"github.com/abdulgalimov/xnote/app"
+	"github.com/abdulgalimov/xnote/core"
+	"github.com/abdulgalimov/xnote/db"
 )
 
 // Start Старт приложения

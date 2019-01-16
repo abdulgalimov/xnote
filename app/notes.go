@@ -1,7 +1,7 @@
 package app
 
 import (
-	"xnote/core"
+	"github.com/abdulgalimov/xnote/core"
 )
 
 func notesList(ctx core.Context) {

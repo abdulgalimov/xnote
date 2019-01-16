@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 	"time"
-	"xnote/models"
+	"github.com/abdulgalimov/xnote/models"
 )
 
 var notesScheme = `

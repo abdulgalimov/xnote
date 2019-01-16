@@ -5,8 +5,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"time"
-	"xnote/core"
-	"xnote/models"
+	"github.com/abdulgalimov/xnote/core"
+	"github.com/abdulgalimov/xnote/models"
 )
 
 func userCreate(ctx core.Context) {

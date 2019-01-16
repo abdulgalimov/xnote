@@ -2,7 +2,7 @@ package api
 
 import (
 	"strconv"
-	"xnote/core"
+	"github.com/abdulgalimov/xnote/core"
 )
 
 func notesList(ctx *context) {

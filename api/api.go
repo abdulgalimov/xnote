@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strconv"
 	"sync"
-	"xnote/core"
+	"github.com/abdulgalimov/xnote/core"
 )
 
 const (

@@ -1,7 +1,7 @@
 package app
 
 import (
-	"xnote/core"
+	"github.com/abdulgalimov/xnote/core"
 )
 
 var xdb core.Db

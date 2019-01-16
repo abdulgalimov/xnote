@@ -3,7 +3,7 @@ package db
 import (
 	"github.com/go-sql-driver/mysql"
 	"time"
-	"xnote/models"
+	"github.com/abdulgalimov/xnote/models"
 )
 
 var usersScheme = `

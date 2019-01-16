@@ -5,7 +5,7 @@ import (
 	// драйвер для sqlx
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"xnote/core"
+	"github.com/abdulgalimov/xnote/core"
 )
 
 var dbInstance *sqlx.DB
