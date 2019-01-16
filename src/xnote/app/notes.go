@@ -5,7 +5,7 @@ import (
 )
 
 func notesList(ctx core.Context) {
-	notesList, count, err := xdb.Notes().FindAll(ctx.GetUserId(), ctx.GetCountOnPage(), ctx.GetPageNum())
+	notesList, count, err := xdb.Notes().FindAll(ctx.GetUserID(), ctx.GetCountOnPage(), ctx.GetPageNum())
 	if err != nil {
 		ctx.SetError(core.SystemError)
 		return
@@ -15,13 +15,13 @@ func notesList(ctx core.Context) {
 }
 
 func noteGet(ctx core.Context) {
-	noteId := ctx.GetNoteId()
-	noteModel, err := xdb.Notes().Find(noteId)
+	noteID := ctx.GetNoteID()
+	noteModel, err := xdb.Notes().Find(noteID)
 	if err != nil || noteModel == nil {
 		ctx.SetError(core.NotFoundError)
 		return
 	}
-	if noteModel.UserId != ctx.GetUserId() {
+	if noteModel.UserID != ctx.GetUserID() {
 		ctx.SetError(core.NotFoundError)
 		return
 	}
@@ -29,9 +29,9 @@ func noteGet(ctx core.Context) {
 	ctx.Complete()
 }
 func createNote(ctx core.Context) {
-	userId := ctx.GetUserId()
+	userID := ctx.GetUserID()
 	text := ctx.GetText()
-	noteModel, err := xdb.Notes().Create(userId, text)
+	noteModel, err := xdb.Notes().Create(userID, text)
 	if err != nil || noteModel == nil {
 		ctx.SetError(core.SystemError)
 		return
@@ -41,17 +41,17 @@ func createNote(ctx core.Context) {
 }
 
 func deleteNote(ctx core.Context) {
-	noteId := ctx.GetNoteId()
-	noteModel, err := xdb.Notes().Find(noteId)
+	noteID := ctx.GetNoteID()
+	noteModel, err := xdb.Notes().Find(noteID)
 	if err != nil || noteModel == nil {
 		ctx.SetError(core.NotFoundError)
 		return
 	}
-	if noteModel.UserId != ctx.GetUserId() {
+	if noteModel.UserID != ctx.GetUserID() {
 		ctx.SetError(core.NotFoundError)
 		return
 	}
-	err = xdb.Notes().Delete(noteId)
+	err = xdb.Notes().Delete(noteID)
 	if err != nil {
 		ctx.SetError(core.SystemError)
 		return

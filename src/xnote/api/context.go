@@ -7,22 +7,22 @@ import (
 	"xnote/models"
 )
 
-type Context struct {
+type context struct {
 	res   http.ResponseWriter
 	req   *http.Request
-	reqId string
+	reqID string
 
 	cmdCode    core.CmdCode
-	userId     int
+	userID     int
 	text       string
-	noteId     int
+	noteID     int
 	name       string
 	username   string
-	telegramId int64
+	telegramID int64
 	email      string
 	password   string
 	platform   string
-	deviceId   string
+	deviceID   string
 
 	pageNum     int
 	countOnPage int
@@ -38,74 +38,74 @@ type Context struct {
 	completeChan chan bool
 }
 
-func (ctx *Context) GetParam(key string) string {
+func (ctx *context) GetParam(key string) string {
 	return ctx.req.URL.Query().Get(key)
 }
 
-func (ctx *Context) GetCmdCode() core.CmdCode {
+func (ctx *context) GetCmdCode() core.CmdCode {
 	return ctx.cmdCode
 }
-func (ctx *Context) GetUserId() int {
-	return ctx.userId
+func (ctx *context) GetUserID() int {
+	return ctx.userID
 }
-func (ctx *Context) GetText() string {
+func (ctx *context) GetText() string {
 	return ctx.text
 }
-func (ctx *Context) GetName() string {
+func (ctx *context) GetName() string {
 	return ctx.name
 }
-func (ctx *Context) GetEmail() string {
+func (ctx *context) GetEmail() string {
 	return ctx.email
 }
-func (ctx *Context) GetPassword() string {
+func (ctx *context) GetPassword() string {
 	return ctx.password
 }
-func (ctx *Context) GetTelegramId() int64 {
-	return ctx.telegramId
+func (ctx *context) GetTelegramID() int64 {
+	return ctx.telegramID
 }
-func (ctx *Context) GetUsername() string {
+func (ctx *context) GetUsername() string {
 	return ctx.username
 }
-func (ctx *Context) GetNoteId() int {
-	return ctx.noteId
+func (ctx *context) GetNoteID() int {
+	return ctx.noteID
 }
-func (ctx *Context) GetPageNum() int {
+func (ctx *context) GetPageNum() int {
 	return ctx.pageNum
 }
-func (ctx *Context) GetCountOnPage() int {
+func (ctx *context) GetCountOnPage() int {
 	return ctx.countOnPage
 }
-func (ctx *Context) GetPlatform() string {
+func (ctx *context) GetPlatform() string {
 	return ctx.platform
 }
-func (ctx *Context) GetDeviceId() string {
-	return ctx.deviceId
+func (ctx *context) GetDeviceID() string {
+	return ctx.deviceID
 }
 
-func (ctx *Context) SetError(code core.ErrorCode) {
+func (ctx *context) SetError(code core.ErrorCode) {
 	ctx.errorCode = int(code)
 	ctx.Complete()
 }
-func (ctx *Context) SetUser(user *models.User) {
+func (ctx *context) SetUser(user *models.User) {
 	ctx.user = user
 }
-func (ctx *Context) GetUser() *models.User {
+func (ctx *context) GetUser() *models.User {
 	return ctx.user
 }
-func (ctx *Context) SetNoteList(noteList []*models.Note, count int) {
+func (ctx *context) SetNoteList(noteList []*models.Note, count int) {
 	ctx.noteList = noteList
 	ctx.notesCount = count
 }
-func (ctx *Context) SetNote(note *models.Note) {
+func (ctx *context) SetNote(note *models.Note) {
 	ctx.note = note
 }
-func (ctx *Context) SetToken(token *models.Token) {
+func (ctx *context) SetToken(token *models.Token) {
 	ctx.token = token
 }
-func (ctx *Context) init() {
+func (ctx *context) init() {
 	ctx.completeChan = make(chan bool)
 }
-func (ctx *Context) Complete() {
+func (ctx *context) Complete() {
 	if ctx.completeChan != nil {
 		ctx.completeChan <- true
 	} else {
@@ -113,7 +113,7 @@ func (ctx *Context) Complete() {
 	}
 }
 
-func (ctx *Context) sendResult(res *result) {
+func (ctx *context) sendResult(res *result) {
 	js, err := json.Marshal(res)
 	if err != nil {
 		panic(err)
@@ -126,7 +126,7 @@ func (ctx *Context) sendResult(res *result) {
 	}
 }
 
-func (ctx *Context) AnswerData(data interface{}) {
+func (ctx *context) AnswerData(data interface{}) {
 	var res result
 	if ctx.errorCode == 0 {
 		res.Ok = true
@@ -135,7 +135,7 @@ func (ctx *Context) AnswerData(data interface{}) {
 		res.ErrorCode = ctx.errorCode
 	}
 	ctx.sendResult(&res)
-	userTurns.del(ctx.reqId)
+	turns.del(ctx.reqID)
 
 	if ctx.completeChan != nil {
 		close(ctx.completeChan)

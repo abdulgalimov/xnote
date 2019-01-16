@@ -6,43 +6,43 @@ import (
 	"xnote/models"
 )
 
-func userCreate(ctx *Context) {
+func userCreate(ctx *context) {
 	ctx.name = ctx.GetParam("name")
 	if ctx.name == "" {
-		ctx.SetError(ErrorInvalidName)
+		ctx.SetError(errorInvalidName)
 		return
 	}
 
 	ctx.platform = ctx.GetParam("platform")
 	if ctx.platform == "" {
-		ctx.SetError(ErrorInvalidPlatform)
+		ctx.SetError(errorInvalidPlatform)
 		return
 	}
-	ctx.deviceId = ctx.GetParam("device_id")
-	if ctx.deviceId == "" {
-		ctx.SetError(ErrorInvalidDeviceId)
+	ctx.deviceID = ctx.GetParam("device_id")
+	if ctx.deviceID == "" {
+		ctx.SetError(errorInvalidDeviceID)
 		return
 	}
 
 	if ctx.GetParam("telegram_id") == "" {
 		ctx.email = ctx.GetParam("email")
 		if ctx.email == "" {
-			ctx.SetError(ErrorInvalidEmail)
+			ctx.SetError(errorInvalidEmail)
 			return
 		}
 		ctx.password = ctx.GetParam("password")
 		if ctx.password == "" {
-			ctx.SetError(ErrorInvalidPassword)
+			ctx.SetError(errorInvalidPassword)
 			return
 		}
 	} else {
-		tgIdStr := ctx.GetParam("telegram_id")
-		telegramId, _ := strconv.ParseInt(tgIdStr, 10, 64)
-		if telegramId == 0 {
-			ctx.SetError(ErrorInvalidTelegramId)
+		tgIDStr := ctx.GetParam("telegram_id")
+		telegramID, _ := strconv.ParseInt(tgIDStr, 10, 64)
+		if telegramID == 0 {
+			ctx.SetError(errorInvalidTelegramID)
 			return
 		}
-		ctx.telegramId = telegramId
+		ctx.telegramID = telegramID
 		ctx.username = ctx.GetParam("username")
 	}
 
@@ -60,25 +60,25 @@ func userCreate(ctx *Context) {
 	})
 }
 
-func userTokenGet(ctx *Context) {
+func userTokenGet(ctx *context) {
 	ctx.email = ctx.GetParam("email")
 	if ctx.email == "" {
-		ctx.SetError(ErrorInvalidEmail)
+		ctx.SetError(errorInvalidEmail)
 		return
 	}
 	ctx.password = ctx.GetParam("password")
 	if ctx.password == "" {
-		ctx.SetError(ErrorInvalidPassword)
+		ctx.SetError(errorInvalidPassword)
 		return
 	}
 	ctx.platform = ctx.GetParam("platform")
 	if ctx.platform == "" {
-		ctx.SetError(ErrorInvalidPlatform)
+		ctx.SetError(errorInvalidPlatform)
 		return
 	}
-	ctx.deviceId = ctx.GetParam("device_id")
-	if ctx.deviceId == "" {
-		ctx.SetError(ErrorInvalidDeviceId)
+	ctx.deviceID = ctx.GetParam("device_id")
+	if ctx.deviceID == "" {
+		ctx.SetError(errorInvalidDeviceID)
 		return
 	}
 

@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS users (
 `
 
 type userInner struct {
-	Id         int            `db:"id"`
-	TelegramId int64          `db:"telegram_id"`
+	ID         int            `db:"id"`
+	TelegramID int64          `db:"telegram_id"`
 	Name       string         `db:"name"`
 	Username   string         `db:"username"`
 	Email      string         `db:"email"`
@@ -30,8 +30,8 @@ type userInner struct {
 
 func (u *userInner) user() *models.User {
 	return &models.User{
-		Id:         u.Id,
-		TelegramId: u.TelegramId,
+		ID:         u.ID,
+		TelegramID: u.TelegramID,
 		Name:       u.Name,
 		Username:   u.Username,
 		Email:      u.Email,
@@ -43,17 +43,17 @@ func (u *userInner) user() *models.User {
 type dbUsers struct {
 }
 
-func (u *dbUsers) Find(userId int) (*models.User, error) {
+func (u *dbUsers) Find(userID int) (*models.User, error) {
 	var user userInner
-	err := dbInstance.Get(&user, `SELECT * FROM users WHERE id=? LIMIT 1;`, userId)
+	err := dbInstance.Get(&user, `SELECT * FROM users WHERE id=? LIMIT 1;`, userID)
 	if err != nil {
 		return nil, err
 	}
 	return user.user(), nil
 }
-func (u *dbUsers) FindByTelegramId(telegramId int64) (*models.User, error) {
+func (u *dbUsers) FindByTelegramID(telegramID int64) (*models.User, error) {
 	var user userInner
-	err := dbInstance.Get(&user, `SELECT * FROM users WHERE telegram_id=? LIMIT 1;`, telegramId)
+	err := dbInstance.Get(&user, `SELECT * FROM users WHERE telegram_id=? LIMIT 1;`, telegramID)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (u *dbUsers) FindByEmail(email string) (*models.User, error) {
 }
 func (u *dbUsers) Create(src models.User) (*models.User, error) {
 	query := `INSERT INTO users (telegram_id, name, username, email, password) VALUES(?, ?, ?, ?, ?);`
-	res, err := dbInstance.Exec(query, src.TelegramId, src.Name, src.Username, src.Email, src.Password)
+	res, err := dbInstance.Exec(query, src.TelegramID, src.Name, src.Username, src.Email, src.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -81,8 +81,8 @@ func (u *dbUsers) Create(src models.User) (*models.User, error) {
 	//
 	now := time.Now()
 	user := models.User{
-		Id:         int(id),
-		TelegramId: src.TelegramId,
+		ID:         int(id),
+		TelegramID: src.TelegramID,
 		Name:       src.Name,
 		Username:   src.Username,
 		Email:      src.Email,

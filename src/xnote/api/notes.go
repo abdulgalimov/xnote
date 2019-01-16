@@ -5,7 +5,7 @@ import (
 	"xnote/core"
 )
 
-func notesList(ctx *Context) {
+func notesList(ctx *context) {
 	ctx.cmdCode = core.NotesListCmd
 	ctx.text = ctx.GetParam("find_text")
 	parsePages(ctx)
@@ -23,15 +23,15 @@ func notesList(ctx *Context) {
 
 }
 
-func noteGet(ctx *Context) {
-	noteIdStr := ctx.GetParam("note_id")
-	noteId, _ := strconv.Atoi(noteIdStr)
-	if noteId <= 0 {
-		ctx.SetError(ErrorInvalidNoteId)
+func noteGet(ctx *context) {
+	noteIDStr := ctx.GetParam("note_id")
+	noteID, _ := strconv.Atoi(noteIDStr)
+	if noteID <= 0 {
+		ctx.SetError(errorInvalidNoteID)
 		return
 	}
 	ctx.cmdCode = core.GetNoteCmd
-	ctx.noteId = noteId
+	ctx.noteID = noteID
 	dropContext(ctx)
 
 	<-ctx.completeChan
@@ -39,10 +39,10 @@ func noteGet(ctx *Context) {
 	ctx.AnswerData(ctx.note)
 }
 
-func noteCreate(ctx *Context) {
+func noteCreate(ctx *context) {
 	text := ctx.GetParam("text")
 	if text == "" {
-		ctx.SetError(ErrorInvalidText)
+		ctx.SetError(errorInvalidText)
 		return
 	}
 	ctx.cmdCode = core.CreateNoteCmd
@@ -54,15 +54,15 @@ func noteCreate(ctx *Context) {
 	ctx.AnswerData(ctx.note)
 }
 
-func noteDelete(ctx *Context) {
-	noteIdStr := ctx.GetParam("note_id")
-	noteId, _ := strconv.Atoi(noteIdStr)
-	if noteId <= 0 {
-		ctx.SetError(ErrorInvalidNoteId)
+func noteDelete(ctx *context) {
+	noteIDStr := ctx.GetParam("note_id")
+	noteID, _ := strconv.Atoi(noteIDStr)
+	if noteID <= 0 {
+		ctx.SetError(errorInvalidNoteID)
 		return
 	}
 	ctx.cmdCode = core.DeleteNoteCmd
-	ctx.noteId = noteId
+	ctx.noteID = noteID
 	dropContext(ctx)
 
 	<-ctx.completeChan

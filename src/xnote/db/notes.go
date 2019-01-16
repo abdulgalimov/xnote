@@ -19,20 +19,20 @@ CREATE TABLE IF NOT EXISTS notes (
 `
 
 type noteInner struct {
-	Id        int64          `db:"id"`
-	UserId    int            `db:"user_id"`
+	ID        int64          `db:"id"`
+	UserID    int            `db:"user_id"`
 	Text      string         `db:"text"`
-	FileId    string         `db:"file_id"`
+	FileID    string         `db:"file_id"`
 	FileType  byte           `db:"file_type"`
 	CreatedAt mysql.NullTime `db:"created_at"`
 }
 
 func (n *noteInner) note() *models.Note {
 	return &models.Note{
-		Id:        n.Id,
-		UserId:    n.UserId,
+		ID:        n.ID,
+		UserID:    n.UserID,
 		Text:      n.Text,
-		FileId:    n.FileId,
+		FileID:    n.FileID,
 		FileType:  n.FileType,
 		CreatedAt: &n.CreatedAt.Time,
 	}
@@ -41,22 +41,22 @@ func (n *noteInner) note() *models.Note {
 type dbNotes struct {
 }
 
-func (n *dbNotes) FindAll(userId int, countOnPage int, pageNum int) ([]*models.Note, int, error) {
+func (n *dbNotes) FindAll(userID int, countOnPage int, pageNum int) ([]*models.Note, int, error) {
 	notesInner := make([]*noteInner, 0)
 	var err error
 	var count int
 	if countOnPage == 0 {
-		err = dbInstance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=?;`, userId)
+		err = dbInstance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=?;`, userID)
 		if err != nil {
 			return nil, 0, err
 		}
 		count = len(notesInner)
 	} else {
-		err = dbInstance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=? LIMIT ? OFFSET ?;`, userId, countOnPage, pageNum*countOnPage)
+		err = dbInstance.Select(&notesInner, `SELECT * FROM notes WHERE user_id=? LIMIT ? OFFSET ?;`, userID, countOnPage, pageNum*countOnPage)
 		if err != nil {
 			return nil, 0, err
 		}
-		err := dbInstance.QueryRow(`SELECT COUNT(*) as count FROM notes WHERE user_id=? ;`, userId).Scan(&count)
+		err := dbInstance.QueryRow(`SELECT COUNT(*) as count FROM notes WHERE user_id=? ;`, userID).Scan(&count)
 		fmt.Println("res", count, err)
 	}
 	//
@@ -67,18 +67,18 @@ func (n *dbNotes) FindAll(userId int, countOnPage int, pageNum int) ([]*models.N
 	return notes, count, nil
 }
 
-func (n *dbNotes) Find(noteId int) (*models.Note, error) {
+func (n *dbNotes) Find(noteID int) (*models.Note, error) {
 	var note noteInner
-	err := dbInstance.Get(&note, `SELECT * FROM notes WHERE id=? LIMIT 1;`, noteId)
+	err := dbInstance.Get(&note, `SELECT * FROM notes WHERE id=? LIMIT 1;`, noteID)
 	if err != nil {
 		return nil, err
 	}
 	return note.note(), nil
 }
 
-func (n *dbNotes) Create(userId int, text string) (*models.Note, error) {
+func (n *dbNotes) Create(userID int, text string) (*models.Note, error) {
 	query := `INSERT INTO notes (user_id, text) VALUES(?, ?);`
-	res, err := dbInstance.Exec(query, userId, text)
+	res, err := dbInstance.Exec(query, userID, text)
 	if err != nil {
 		return nil, err
 	}
@@ -90,18 +90,18 @@ func (n *dbNotes) Create(userId int, text string) (*models.Note, error) {
 	//
 	now := time.Now()
 	note := models.Note{
-		Id:        id,
-		UserId:    userId,
+		ID:        id,
+		UserID:    userID,
 		Text:      text,
-		FileId:    "",
+		FileID:    "",
 		FileType:  0,
 		CreatedAt: &now,
 	}
 	return &note, nil
 }
 
-func (n *dbNotes) Delete(noteId int) error {
+func (n *dbNotes) Delete(noteID int) error {
 	query := `DELETE FROM notes WHERE id=?;`
-	_, err := dbInstance.Exec(query, noteId)
+	_, err := dbInstance.Exec(query, noteID)
 	return err
 }

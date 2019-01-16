@@ -12,7 +12,7 @@ import (
 func userCreate(ctx core.Context) {
 	var userSrc models.User
 	userSrc.Name = ctx.GetName()
-	if ctx.GetTelegramId() == 0 {
+	if ctx.GetTelegramID() == 0 {
 		userSrc.Email = ctx.GetEmail()
 		userByEmail, _ := xdb.Users().FindByEmail(userSrc.Email)
 		if userByEmail != nil {
@@ -22,9 +22,9 @@ func userCreate(ctx core.Context) {
 
 		userSrc.Password = ctx.GetPassword()
 	} else {
-		userSrc.TelegramId = ctx.GetTelegramId()
-		userByTelegramId, _ := xdb.Users().FindByTelegramId(userSrc.TelegramId)
-		if userByTelegramId != nil {
+		userSrc.TelegramID = ctx.GetTelegramID()
+		userByTelegramID, _ := xdb.Users().FindByTelegramID(userSrc.TelegramID)
+		if userByTelegramID != nil {
 			ctx.SetError(core.DuplicateError)
 			return
 		}
@@ -66,23 +66,23 @@ func tokenGet(ctx core.Context) {
 }
 
 func createToken(ctx core.Context, isNew bool) (*models.Token, error) {
-	userId := ctx.GetUserId()
+	userID := ctx.GetUserID()
 	platform := ctx.GetPlatform()
-	deviceId := ctx.GetDeviceId()
-	s := fmt.Sprintf("%d|%s|%s|%s|VCcxR6WqmMj2tFnE", userId, platform, deviceId, time.Now().Format(time.RFC3339Nano))
+	deviceID := ctx.GetDeviceID()
+	s := fmt.Sprintf("%d|%s|%s|%s|VCcxR6WqmMj2tFnE", userID, platform, deviceID, time.Now().Format(time.RFC3339Nano))
 	h := sha1.New()
 	h.Write([]byte(s))
 	var value = hex.EncodeToString(h.Sum(nil))
 
 	if !isNew {
-		oldToken := xdb.Tokens().FindByPlatform(userId, platform, deviceId)
+		oldToken := xdb.Tokens().FindByPlatform(userID, platform, deviceID)
 		if oldToken != nil {
 			oldToken.Value = value
-			xdb.Tokens().Update(oldToken.Id, value)
+			xdb.Tokens().Update(oldToken.ID, value)
 			return oldToken, nil
 		}
 	}
 
-	token, err := xdb.Tokens().Create(userId, platform, deviceId, value)
+	token, err := xdb.Tokens().Create(userID, platform, deviceID, value)
 	return token, err
 }

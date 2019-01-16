@@ -19,10 +19,10 @@ CREATE TABLE IF NOT EXISTS tokens (
 `
 
 type tokenInner struct {
-	Id        int            `db:"id"`
-	UserId    int            `db:"user_id"`
+	ID        int            `db:"id"`
+	UserID    int            `db:"user_id"`
 	Platform  string         `db:"platform"`
-	DeviceId  string         `db:"device_id"`
+	DeviceID  string         `db:"device_id"`
 	Value     string         `db:"value"`
 	CreatedAt mysql.NullTime `db:"created_at"`
 	UpdatedAt mysql.NullTime `db:"updated_at"`
@@ -30,10 +30,10 @@ type tokenInner struct {
 
 func (t *tokenInner) token() *models.Token {
 	return &models.Token{
-		Id:        t.Id,
-		UserId:    t.UserId,
+		ID:        t.ID,
+		UserID:    t.UserID,
 		Platform:  t.Platform,
-		DeviceId:  t.DeviceId,
+		DeviceID:  t.DeviceID,
 		Value:     t.Value,
 		CreatedAt: &t.CreatedAt.Time,
 		UpdatedAt: &t.UpdatedAt.Time,
@@ -43,7 +43,7 @@ func (t *tokenInner) token() *models.Token {
 type dbTokens struct {
 }
 
-func (t *dbTokens) FindByPlatform(userId int, platform string, deviceId string) *models.Token {
+func (t *dbTokens) FindByPlatform(userID int, platform string, deviceID string) *models.Token {
 	query := `
 SELECT * FROM tokens
 WHERE user_id=?
@@ -51,15 +51,15 @@ WHERE user_id=?
 	AND device_id LIKE ?
 LIMIT 1;`
 	var token tokenInner
-	err := dbInstance.Get(&token, query, userId, platform, deviceId)
+	err := dbInstance.Get(&token, query, userID, platform, deviceID)
 	if err != nil {
 		return nil
 	}
 	return token.token()
 }
 
-func (t *dbTokens) Update(tokenId int, value string) {
-	dbInstance.MustExec("UPDATE tokens SET value=?,updated_at=? WHERE id=?", value, time.Now(), tokenId)
+func (t *dbTokens) Update(tokenID int, value string) {
+	dbInstance.MustExec("UPDATE tokens SET value=?,updated_at=? WHERE id=?", value, time.Now(), tokenID)
 }
 
 func (t *dbTokens) FindByValue(value string) *models.Token {
@@ -70,9 +70,9 @@ func (t *dbTokens) FindByValue(value string) *models.Token {
 	}
 	return token.token()
 }
-func (t *dbTokens) Create(userId int, platform string, deviceId string, value string) (*models.Token, error) {
+func (t *dbTokens) Create(userID int, platform string, deviceID string, value string) (*models.Token, error) {
 	query := `INSERT INTO tokens (user_id, value, platform, device_id) VALUES(?, ?, ?, ?);`
-	res, err := dbInstance.Exec(query, userId, value, platform, deviceId)
+	res, err := dbInstance.Exec(query, userID, value, platform, deviceID)
 	if err != nil {
 		return nil, err
 	}
@@ -84,10 +84,10 @@ func (t *dbTokens) Create(userId int, platform string, deviceId string, value st
 	//
 	now := time.Now()
 	token := models.Token{
-		Id:        int(id),
-		UserId:    userId,
+		ID:        int(id),
+		UserID:    userID,
 		Platform:  platform,
-		DeviceId:  deviceId,
+		DeviceID:  deviceID,
 		Value:     value,
 		CreatedAt: &now,
 		UpdatedAt: &now,

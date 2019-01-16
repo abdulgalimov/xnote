@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	// драйвер для sqlx
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"xnote/core"
@@ -25,6 +26,7 @@ func (d *xdb) Notes() core.DbNotes {
 	return d.notes
 }
 
+// Connect подключиться к БД
 func Connect(config core.DbConnectConfig) (core.Db, error) {
 	dbPath := fmt.Sprintf("%s:%d", config.Host, config.Port)
 	source := fmt.Sprintf("%s:%s@tcp(%s)/%s", config.UserName, config.Password, dbPath, config.DbName)

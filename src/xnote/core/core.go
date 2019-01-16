@@ -4,38 +4,44 @@ import (
 	"xnote/models"
 )
 
+// CmdCode код события
 type CmdCode int
 
+// Коды событий приложения
 const (
-	NotesListCmd    CmdCode = 1
-	CreateNoteCmd   CmdCode = 2
-	DeleteNoteCmd   CmdCode = 3
-	GetNoteCmd      CmdCode = 4
-	UserCreateCmd   CmdCode = 5
-	UserTokenGetCmd CmdCode = 6
+	NotesListCmd	CmdCode = iota+1
+	CreateNoteCmd
+	DeleteNoteCmd
+	GetNoteCmd
+	UserCreateCmd
+	UserTokenGetCmd
 )
 
+// ErrorCode код ошибки приложения
 type ErrorCode int
 
+
+// коды ошибок приложения
 const (
-	SystemError    ErrorCode = -2000
-	NotFoundError  ErrorCode = -2001
-	AccessError    ErrorCode = -2002
-	DuplicateError ErrorCode = -2003
+	SystemError		ErrorCode = iota-2000
+	NotFoundError
+	AccessError
+	DuplicateError
 )
 
+// Context интверфейс, контекст запроса
 type Context interface {
 	GetCmdCode() CmdCode
-	GetUserId() int
+	GetUserID() int
 	GetText() string
-	GetNoteId() int
+	GetNoteID() int
 	GetName() string
 	GetEmail() string
 	GetPassword() string
-	GetTelegramId() int64
+	GetTelegramID() int64
 	GetUsername() string
 	GetPlatform() string
-	GetDeviceId() string
+	GetDeviceID() string
 
 	GetPageNum() int
 	GetCountOnPage() int
@@ -49,8 +55,11 @@ type Context interface {
 
 	Complete()
 }
+
+// ContextReader канал, для отправки запросов
 type ContextReader chan Context
 
+// DbConnectConfig конфиг для подключения к БД
 type DbConnectConfig struct {
 	Host       string
 	Port       int
@@ -60,29 +69,33 @@ type DbConnectConfig struct {
 	Password   string
 }
 
+// Db интерфейс для работы с БД
 type Db interface {
 	Users() DbUsers
 	Tokens() DbTokens
 	Notes() DbNotes
 }
 
+// DbUsers интерфейс БД для работы с таблицей users
 type DbUsers interface {
-	Find(userId int) (*models.User, error)
-	FindByTelegramId(telegramId int64) (*models.User, error)
+	Find(userID int) (*models.User, error)
+	FindByTelegramID(telegramID int64) (*models.User, error)
 	FindByEmail(email string) (*models.User, error)
 	Create(src models.User) (*models.User, error)
 }
 
+// DbNotes интерфейс БД для работы с таблицей notes
 type DbNotes interface {
-	FindAll(userId int, countOnPage int, pageNum int) ([]*models.Note, int, error)
-	Find(noteId int) (*models.Note, error)
-	Create(userId int, text string) (*models.Note, error)
-	Delete(noteId int) error
+	FindAll(userID int, countOnPage int, pageNum int) ([]*models.Note, int, error)
+	Find(noteID int) (*models.Note, error)
+	Create(userID int, text string) (*models.Note, error)
+	Delete(noteID int) error
 }
 
+// DbTokens интерфейс БД для работы с таблицей tokens
 type DbTokens interface {
-	FindByPlatform(userId int, platform string, deviceId string) *models.Token
-	Update(noteId int, value string)
+	FindByPlatform(userID int, platform string, deviceID string) *models.Token
+	Update(noteID int, value string)
 	FindByValue(value string) *models.Token
-	Create(userId int, platform string, deviceId string, value string) (*models.Token, error)
+	Create(userID int, platform string, deviceID string, value string) (*models.Token, error)
 }

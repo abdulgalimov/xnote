@@ -10,31 +10,30 @@ import (
 )
 
 const (
-	ErrorInvalidToken = -1000 - iota
-	ErrorTurnRequest
-	ErrorInvalidUserId
-	ErrorInvalidText
-	ErrorInvalidNoteId
-	ErrorInvalidTelegramId
-	ErrorDuplicateTelegramId
-	ErrorInvalidName
-	ErrorInvalidPlatform
-	ErrorInvalidDeviceId
-	ErrorInvalidEmail
-	ErrorDuplicateEmail
-	ErrorInvalidPassword
+	errorInvalidToken = -1000 - iota
+	errorTurnRequest
+	errorInvalidUserID
+	errorInvalidText
+	errorInvalidNoteID
+	errorInvalidTelegramID
+	errorInvalidName
+	errorInvalidPlatform
+	errorInvalidDeviceID
+	errorInvalidEmail
+	errorInvalidPassword
 )
 
 var channel core.ContextReader
-var resolver *Resolver
+var resolver *httpResolver
 
 var xdb core.Db
 
+// Init инициализировать пакет
 func Init(db core.Db) {
 	xdb = db
 	channel = make(core.ContextReader, 10)
-	resolver = &Resolver{
-		handlers: make(map[string]HandlerFunc),
+	resolver = &httpResolver{
+		handlers: make(map[string]handlerFunc),
 		flags:    make(map[string]int),
 		cache:    make(map[string]*regexp.Regexp),
 	}
@@ -46,9 +45,12 @@ func Init(db core.Db) {
 	resolver.add("^GET /note/delete/$", noteDelete, 0)
 }
 
+// GetContextReader получить канал куда отправляются контексты
 func GetContextReader() core.ContextReader {
 	return channel
 }
+
+// Start стартануть web-сервер
 func Start() {
 	err := http.ListenAndServe(":9898", resolver)
 	if err != nil {
@@ -56,10 +58,10 @@ func Start() {
 	}
 }
 
-type HandlerFunc func(ctx *Context)
+type handlerFunc func(ctx *context)
 
-type Resolver struct {
-	handlers map[string]HandlerFunc
+type httpResolver struct {
+	handlers map[string]handlerFunc
 	flags    map[string]int
 	cache    map[string]*regexp.Regexp
 }
@@ -69,42 +71,42 @@ const (
 	flagNoToken = 0x2
 )
 
-func (r *Resolver) add(regex string, handler HandlerFunc, flags int) {
+func (r *httpResolver) add(regex string, handler handlerFunc, flags int) {
 	r.handlers[regex] = handler
 	r.flags[regex] = flags
 	cache, _ := regexp.Compile(regex)
 	r.cache[regex] = cache
 }
 
-type UserTurns struct {
+type userTurns struct {
 	sync.Mutex
 	reqs map[string]bool
 }
 
-var userTurns = UserTurns{
+var turns = userTurns{
 	reqs: make(map[string]bool),
 }
 
-func (u *UserTurns) has(reqId string) bool {
-	return u.reqs[reqId]
+func (u *userTurns) has(reqID string) bool {
+	return u.reqs[reqID]
 }
-func (u *UserTurns) add(reqId string) {
+func (u *userTurns) add(reqID string) {
 	u.Lock()
-	u.reqs[reqId] = true
+	u.reqs[reqID] = true
 	u.Unlock()
 }
-func (u *UserTurns) del(reqId string) {
+func (u *userTurns) del(reqID string) {
 	u.Lock()
-	u.reqs[reqId] = false
+	u.reqs[reqID] = false
 	u.Unlock()
 }
 
-func (r *Resolver) ServeHTTP(res http.ResponseWriter, req *http.Request) {
+func (r *httpResolver) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	check := req.Method + " " + req.URL.Path
 	for pattern, handlerFunc := range r.handlers {
 		if r.cache[pattern].MatchString(check) == true {
 			flags := r.flags[pattern]
-			var ctx Context
+			var ctx context
 			ctx.res = res
 			ctx.req = req
 
@@ -112,12 +114,12 @@ func (r *Resolver) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 				if !loadUser(&ctx) {
 					return
 				}
-				ctx.reqId = fmt.Sprintf("%d-%s", ctx.GetUserId(), check)
-				if userTurns.has(ctx.reqId) {
-					ctx.SetError(ErrorTurnRequest)
+				ctx.reqID = fmt.Sprintf("%d-%s", ctx.GetUserID(), check)
+				if turns.has(ctx.reqID) {
+					ctx.SetError(errorTurnRequest)
 					return
 				}
-				userTurns.add(ctx.reqId)
+				turns.add(ctx.reqID)
 			}
 			if flags&flagNoToken == 0 {
 				if !loadToken(&ctx) {
@@ -132,41 +134,41 @@ func (r *Resolver) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	http.NotFound(res, req)
 }
 
-func loadUser(ctx *Context) bool {
-	userIdStr := ctx.GetParam("user_id")
-	userId, _ := strconv.Atoi(userIdStr)
-	if userId <= 0 {
-		ctx.SetError(ErrorInvalidUserId)
+func loadUser(ctx *context) bool {
+	userIDStr := ctx.GetParam("user_id")
+	userID, _ := strconv.Atoi(userIDStr)
+	if userID <= 0 {
+		ctx.SetError(errorInvalidUserID)
 		return false
 	}
 
-	ctx.userId = userId
+	ctx.userID = userID
 	//
-	user, _ := xdb.Users().Find(ctx.userId)
+	user, _ := xdb.Users().Find(ctx.userID)
 	if user == nil {
-		ctx.SetError(ErrorInvalidUserId)
+		ctx.SetError(errorInvalidUserID)
 		return false
 	}
 	ctx.SetUser(user)
 	return true
 }
 
-func loadToken(ctx *Context) bool {
+func loadToken(ctx *context) bool {
 	tokenValue := ctx.GetParam("token")
 	if tokenValue == "" {
-		ctx.SetError(ErrorInvalidToken)
+		ctx.SetError(errorInvalidToken)
 		return false
 	}
 	token := xdb.Tokens().FindByValue(tokenValue)
-	if token == nil || token.UserId != ctx.GetUserId() {
-		ctx.SetError(ErrorInvalidToken)
+	if token == nil || token.UserID != ctx.GetUserID() {
+		ctx.SetError(errorInvalidToken)
 		return false
 	}
 	ctx.SetToken(token)
 	return true
 }
 
-func parsePages(ctx *Context) {
+func parsePages(ctx *context) {
 	countOnPageStr := ctx.GetParam("countOnPage")
 	if countOnPageStr != "" {
 		countOnPage, err := strconv.Atoi(countOnPageStr)
@@ -186,6 +188,6 @@ func parsePages(ctx *Context) {
 	}
 }
 
-func dropContext(ctx *Context) {
+func dropContext(ctx *context) {
 	channel <- ctx
 }

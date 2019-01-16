@@ -7,6 +7,7 @@ import (
 	"xnote/db"
 )
 
+// Start Старт приложения
 func Start() {
 	var dbConfig core.DbConnectConfig
 	dbConfig.Host = "localhost"
