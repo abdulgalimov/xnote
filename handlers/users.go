@@ -38,7 +38,7 @@ func UserCreate(ctx common.Context, xdb common.Db) {
 	}
 	ctx.SetUser(user)
 
-	token, err := createToken(ctx, xdb,true)
+	token, err := createToken(ctx, xdb, true)
 	if err != nil || token == nil {
 		ctx.SetError(common.SystemError)
 		return
@@ -54,7 +54,7 @@ func TokenGet(ctx common.Context, xdb common.Db) {
 		ctx.SetError(common.AccessError)
 		return
 	}
-	token, err := createToken(ctx, xdb,false)
+	token, err := createToken(ctx, xdb, false)
 	if err != nil || token == nil {
 		ctx.SetError(common.SystemError)
 		return

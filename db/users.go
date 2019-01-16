@@ -1,9 +1,9 @@
 package db
 
 import (
-	"github.com/jmoiron/sqlx"
-	"github.com/go-sql-driver/mysql"
 	"github.com/abdulgalimov/xnote/common"
+	"github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"time"
 )
 

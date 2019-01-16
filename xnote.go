@@ -20,7 +20,6 @@ func readContext(contextReader common.ContextReader, xdb common.Db) {
 	}
 }
 
-
 func parseContext(ctx common.Context, xdb common.Db) {
 	switch ctx.GetCmdCode() {
 	case common.NotesListCmd:
