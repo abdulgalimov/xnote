@@ -19,20 +19,21 @@ CREATE TABLE IF NOT EXISTS notes (
 `
 
 type noteInner struct {
-	Id        int64   			`db:"id"`
-	UserId    int     			`db:"user_id"`
-	Text      string  			`db:"text"`
-	FileId    string  			`db:"file_id"`
-	FileType  byte    			`db:"file_type"`
-	CreatedAt mysql.NullTime	`db:"created_at"`
+	Id        int64          `db:"id"`
+	UserId    int            `db:"user_id"`
+	Text      string         `db:"text"`
+	FileId    string         `db:"file_id"`
+	FileType  byte           `db:"file_type"`
+	CreatedAt mysql.NullTime `db:"created_at"`
 }
+
 func (n *noteInner) note() *models.Note {
 	return &models.Note{
-		Id: n.Id,
-		UserId: n.UserId,
-		Text: n.Text,
-		FileId: n.FileId,
-		FileType: n.FileType,
+		Id:        n.Id,
+		UserId:    n.UserId,
+		Text:      n.Text,
+		FileId:    n.FileId,
+		FileType:  n.FileType,
 		CreatedAt: &n.CreatedAt.Time,
 	}
 }
@@ -55,7 +56,7 @@ func (n *dbNotes) FindAll(userId int, countOnPage int, pageNum int) ([]*models.N
 		if err != nil {
 			return nil, 0, err
 		}
-		err := dbInstance.QueryRow( `SELECT COUNT(*) as count FROM notes WHERE user_id=? ;`, userId).Scan(&count)
+		err := dbInstance.QueryRow(`SELECT COUNT(*) as count FROM notes WHERE user_id=? ;`, userId).Scan(&count)
 		fmt.Println("res", count, err)
 	}
 	//
@@ -89,11 +90,11 @@ func (n *dbNotes) Create(userId int, text string) (*models.Note, error) {
 	//
 	now := time.Now()
 	note := models.Note{
-		Id: id,
-		UserId: userId,
-		Text: text,
-		FileId: "",
-		FileType: 0,
+		Id:        id,
+		UserId:    userId,
+		Text:      text,
+		FileId:    "",
+		FileType:  0,
 		CreatedAt: &now,
 	}
 	return &note, nil

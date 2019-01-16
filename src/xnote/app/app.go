@@ -5,6 +5,7 @@ import (
 )
 
 var xdb core.Db
+
 func Init(db core.Db) {
 	xdb = db
 }

@@ -19,23 +19,24 @@ CREATE TABLE IF NOT EXISTS users (
 `
 
 type userInner struct {
-	Id        	int	    		`db:"id"`
-	TelegramId	int64   		`db:"telegram_id"`
-	Name      	string  		`db:"name"`
-	Username  	string  		`db:"username"`
-	Email     	string  		`db:"email"`
-	Password  	string  		`db:"password"`
-	CreatedAt 	mysql.NullTime	`db:"created_at"`
+	Id         int            `db:"id"`
+	TelegramId int64          `db:"telegram_id"`
+	Name       string         `db:"name"`
+	Username   string         `db:"username"`
+	Email      string         `db:"email"`
+	Password   string         `db:"password"`
+	CreatedAt  mysql.NullTime `db:"created_at"`
 }
+
 func (u *userInner) user() *models.User {
 	return &models.User{
-		Id: u.Id,
+		Id:         u.Id,
 		TelegramId: u.TelegramId,
-		Name: u.Name,
-		Username: u.Username,
-		Email: u.Email,
-		Password: u.Password,
-		CreatedAt: &u.CreatedAt.Time,
+		Name:       u.Name,
+		Username:   u.Username,
+		Email:      u.Email,
+		Password:   u.Password,
+		CreatedAt:  &u.CreatedAt.Time,
 	}
 }
 
@@ -80,13 +81,13 @@ func (u *dbUsers) Create(src models.User) (*models.User, error) {
 	//
 	now := time.Now()
 	user := models.User{
-		Id: int(id),
+		Id:         int(id),
 		TelegramId: src.TelegramId,
-		Name: src.Name,
-		Username: src.Username,
-		Email: src.Email,
-		Password: src.Password,
-		CreatedAt: &now,
+		Name:       src.Name,
+		Username:   src.Username,
+		Email:      src.Email,
+		Password:   src.Password,
+		CreatedAt:  &now,
 	}
 	return &user, nil
 }

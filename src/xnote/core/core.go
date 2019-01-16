@@ -5,20 +5,22 @@ import (
 )
 
 type CmdCode int
+
 const (
-	NotesListCmd CmdCode  = 1
-	CreateNoteCmd CmdCode = 2
-	DeleteNoteCmd CmdCode = 3
-	GetNoteCmd CmdCode    = 4
-	UserCreateCmd CmdCode  = 5
-	UserTokenGetCmd CmdCode  = 6
+	NotesListCmd    CmdCode = 1
+	CreateNoteCmd   CmdCode = 2
+	DeleteNoteCmd   CmdCode = 3
+	GetNoteCmd      CmdCode = 4
+	UserCreateCmd   CmdCode = 5
+	UserTokenGetCmd CmdCode = 6
 )
 
 type ErrorCode int
+
 const (
-	SystemError ErrorCode = -2000
-	NotFoundError ErrorCode = -2001
-	AccessError ErrorCode = -2002
+	SystemError    ErrorCode = -2000
+	NotFoundError  ErrorCode = -2001
+	AccessError    ErrorCode = -2002
 	DuplicateError ErrorCode = -2003
 )
 
@@ -49,14 +51,13 @@ type Context interface {
 }
 type ContextReader chan Context
 
-
 type DbConnectConfig struct {
-	Host 		string
-	Port 		int
-	DriverName 	string
-	DbName     	string
-	UserName   	string
-	Password   	string
+	Host       string
+	Port       int
+	DriverName string
+	DbName     string
+	UserName   string
+	Password   string
 }
 
 type Db interface {

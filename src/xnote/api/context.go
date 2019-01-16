@@ -8,8 +8,8 @@ import (
 )
 
 type Context struct {
-	res http.ResponseWriter
-	req *http.Request
+	res   http.ResponseWriter
+	req   *http.Request
 	reqId string
 
 	cmdCode    core.CmdCode
@@ -24,16 +24,16 @@ type Context struct {
 	platform   string
 	deviceId   string
 
-	pageNum 	int
-	countOnPage	int
+	pageNum     int
+	countOnPage int
 
 	errorCode int
 
-	user		*models.User
-	token		*models.Token
-	noteList  	[]*models.Note
-	notesCount	int
-	note      	*models.Note
+	user       *models.User
+	token      *models.Token
+	noteList   []*models.Note
+	notesCount int
+	note       *models.Note
 
 	completeChan chan bool
 }
@@ -81,7 +81,6 @@ func (ctx *Context) GetPlatform() string {
 func (ctx *Context) GetDeviceId() string {
 	return ctx.deviceId
 }
-
 
 func (ctx *Context) SetError(code core.ErrorCode) {
 	ctx.errorCode = int(code)
@@ -143,8 +142,6 @@ func (ctx *Context) AnswerData(data interface{}) {
 	}
 }
 
-
-
 type result struct {
 	Ok        bool        `json:"ok"`
 	ErrorCode int         `json:"error_code"`
@@ -152,8 +149,8 @@ type result struct {
 }
 
 type pagesNoteData struct {
-	List 		[]*models.Note	`json:"list"`
-	Count 		int 			`json:"count"`
-	PageNum		int 			`json:"pageNum"`
-	CountOnPage	int 			`json:"countOnPage"`
+	List        []*models.Note `json:"list"`
+	Count       int            `json:"count"`
+	PageNum     int            `json:"pageNum"`
+	CountOnPage int            `json:"countOnPage"`
 }

@@ -19,21 +19,22 @@ CREATE TABLE IF NOT EXISTS tokens (
 `
 
 type tokenInner struct {
-	Id        	int     		`db:"id"`
-	UserId		int     		`db:"user_id"`
-	Platform	string			`db:"platform"`
-	DeviceId	string			`db:"device_id"`
-	Value      	string  		`db:"value"`
-	CreatedAt 	mysql.NullTime	`db:"created_at"`
-	UpdatedAt 	mysql.NullTime	`db:"updated_at"`
+	Id        int            `db:"id"`
+	UserId    int            `db:"user_id"`
+	Platform  string         `db:"platform"`
+	DeviceId  string         `db:"device_id"`
+	Value     string         `db:"value"`
+	CreatedAt mysql.NullTime `db:"created_at"`
+	UpdatedAt mysql.NullTime `db:"updated_at"`
 }
+
 func (t *tokenInner) token() *models.Token {
 	return &models.Token{
-		Id: t.Id,
-		UserId: t.UserId,
-		Platform: t.Platform,
-		DeviceId: t.DeviceId,
-		Value: t.Value,
+		Id:        t.Id,
+		UserId:    t.UserId,
+		Platform:  t.Platform,
+		DeviceId:  t.DeviceId,
+		Value:     t.Value,
 		CreatedAt: &t.CreatedAt.Time,
 		UpdatedAt: &t.UpdatedAt.Time,
 	}
@@ -41,7 +42,6 @@ func (t *tokenInner) token() *models.Token {
 
 type dbTokens struct {
 }
-
 
 func (t *dbTokens) FindByPlatform(userId int, platform string, deviceId string) *models.Token {
 	query := `
@@ -84,11 +84,11 @@ func (t *dbTokens) Create(userId int, platform string, deviceId string, value st
 	//
 	now := time.Now()
 	token := models.Token{
-		Id: int(id),
-		UserId: userId,
-		Platform: platform,
-		DeviceId: deviceId,
-		Value: value,
+		Id:        int(id),
+		UserId:    userId,
+		Platform:  platform,
+		DeviceId:  deviceId,
+		Value:     value,
 		CreatedAt: &now,
 		UpdatedAt: &now,
 	}

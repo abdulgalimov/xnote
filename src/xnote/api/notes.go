@@ -14,9 +14,9 @@ func notesList(ctx *Context) {
 	<-ctx.completeChan
 
 	data := pagesNoteData{
-		List: ctx.noteList,
-		Count: ctx.notesCount,
-		PageNum: ctx.pageNum,
+		List:        ctx.noteList,
+		Count:       ctx.notesCount,
+		PageNum:     ctx.pageNum,
 		CountOnPage: ctx.countOnPage,
 	}
 	ctx.AnswerData(&data)

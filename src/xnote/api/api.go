@@ -29,15 +29,16 @@ var channel core.ContextReader
 var resolver *Resolver
 
 var xdb core.Db
+
 func Init(db core.Db) {
 	xdb = db
 	channel = make(core.ContextReader, 10)
 	resolver = &Resolver{
-		handlers: 	make(map[string]HandlerFunc),
-		flags: 		make(map[string]int),
-		cache:    	make(map[string]*regexp.Regexp),
+		handlers: make(map[string]HandlerFunc),
+		flags:    make(map[string]int),
+		cache:    make(map[string]*regexp.Regexp),
 	}
-	resolver.add("^GET /user/create/$", userCreate, flagNoUser | flagNoToken)
+	resolver.add("^GET /user/create/$", userCreate, flagNoUser|flagNoToken)
 	resolver.add("^GET /user/token/$", userTokenGet, flagNoToken)
 	resolver.add("^GET /notes/$", notesList, 0)
 	resolver.add("^GET /note/$", noteGet, 0)
@@ -59,7 +60,7 @@ type HandlerFunc func(ctx *Context)
 
 type Resolver struct {
 	handlers map[string]HandlerFunc
-	flags	 map[string]int
+	flags    map[string]int
 	cache    map[string]*regexp.Regexp
 }
 
@@ -67,6 +68,7 @@ const (
 	flagNoUser  = 0x1
 	flagNoToken = 0x2
 )
+
 func (r *Resolver) add(regex string, handler HandlerFunc, flags int) {
 	r.handlers[regex] = handler
 	r.flags[regex] = flags
@@ -78,9 +80,11 @@ type UserTurns struct {
 	sync.Mutex
 	reqs map[string]bool
 }
+
 var userTurns = UserTurns{
 	reqs: make(map[string]bool),
 }
+
 func (u *UserTurns) has(reqId string) bool {
 	return u.reqs[reqId]
 }
@@ -104,7 +108,7 @@ func (r *Resolver) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 			ctx.res = res
 			ctx.req = req
 
-			if flags & flagNoUser == 0 {
+			if flags&flagNoUser == 0 {
 				if !loadUser(&ctx) {
 					return
 				}
@@ -115,7 +119,7 @@ func (r *Resolver) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 				}
 				userTurns.add(ctx.reqId)
 			}
-			if flags & flagNoToken == 0 {
+			if flags&flagNoToken == 0 {
 				if !loadToken(&ctx) {
 					return
 				}
@@ -161,7 +165,6 @@ func loadToken(ctx *Context) bool {
 	ctx.SetToken(token)
 	return true
 }
-
 
 func parsePages(ctx *Context) {
 	countOnPageStr := ctx.GetParam("countOnPage")

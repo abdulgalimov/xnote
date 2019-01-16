@@ -8,11 +8,13 @@ import (
 )
 
 var dbInstance *sqlx.DB
+
 type xdb struct {
-	users *dbUsers
+	users  *dbUsers
 	tokens *dbTokens
-	notes *dbNotes
+	notes  *dbNotes
 }
+
 func (d *xdb) Users() core.DbUsers {
 	return d.users
 }
@@ -34,9 +36,9 @@ func Connect(config core.DbConnectConfig) (core.Db, error) {
 	initScheme(tokensScheme)
 	//
 	return &xdb{
-		users: &dbUsers{},
+		users:  &dbUsers{},
 		tokens: &dbTokens{},
-		notes: &dbNotes{},
+		notes:  &dbNotes{},
 	}, err
 }
 

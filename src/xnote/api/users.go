@@ -52,10 +52,10 @@ func userCreate(ctx *Context) {
 	<-ctx.completeChan
 
 	ctx.AnswerData(struct {
-		User *models.User `json:"user"`
+		User  *models.User  `json:"user"`
 		Token *models.Token `json:"token"`
 	}{
-		User: ctx.user,
+		User:  ctx.user,
 		Token: ctx.token,
 	})
 }

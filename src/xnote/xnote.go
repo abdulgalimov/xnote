@@ -1,10 +1,10 @@
 package xnote
 
 import (
-	"xnote/db"
 	"xnote/api"
 	"xnote/app"
 	"xnote/core"
+	"xnote/db"
 )
 
 func Create() error {

@@ -69,7 +69,7 @@ func createToken(ctx core.Context, isNew bool) (*models.Token, error) {
 	userId := ctx.GetUserId()
 	platform := ctx.GetPlatform()
 	deviceId := ctx.GetDeviceId()
-	s := fmt.Sprintf("%d|%s|%s|%s|VCcxR6WqmMj2tFnE", userId, platform , deviceId, time.Now().Format(time.RFC3339Nano))
+	s := fmt.Sprintf("%d|%s|%s|%s|VCcxR6WqmMj2tFnE", userId, platform, deviceId, time.Now().Format(time.RFC3339Nano))
 	h := sha1.New()
 	h.Write([]byte(s))
 	var value = hex.EncodeToString(h.Sum(nil))
