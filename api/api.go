@@ -2,11 +2,11 @@ package api
 
 import (
 	"fmt"
+	"github.com/abdulgalimov/xnote/core"
 	"net/http"
 	"regexp"
 	"strconv"
 	"sync"
-	"github.com/abdulgalimov/xnote/core"
 )
 
 const (

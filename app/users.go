@@ -4,9 +4,9 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
-	"time"
 	"github.com/abdulgalimov/xnote/core"
 	"github.com/abdulgalimov/xnote/models"
+	"time"
 )
 
 func userCreate(ctx core.Context) {

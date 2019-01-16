@@ -1,9 +1,9 @@
 package api
 
 import (
-	"strconv"
 	"github.com/abdulgalimov/xnote/core"
 	"github.com/abdulgalimov/xnote/models"
+	"strconv"
 )
 
 func userCreate(ctx *context) {

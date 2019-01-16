@@ -2,10 +2,10 @@ package db
 
 import (
 	"fmt"
+	"github.com/abdulgalimov/xnote/core"
 	// драйвер для sqlx
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
-	"github.com/abdulgalimov/xnote/core"
 )
 
 var dbInstance *sqlx.DB
