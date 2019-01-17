@@ -3,6 +3,7 @@ package web
 import (
 	"fmt"
 	"github.com/abdulgalimov/xnote/common"
+	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -28,6 +29,14 @@ var resolver *httpResolver
 
 // Init инициализировать пакет
 func Init(db common.Db) {
+	r := gin.Default()
+	r.GET("/ping/:id", pingHandler)
+	err := r.Run(":9899")
+	if err != nil {
+		panic(err)
+	}
+
+
 	channel = make(common.ContextReader, 10)
 	resolver = &httpResolver{
 		db:       db,
@@ -41,6 +50,12 @@ func Init(db common.Db) {
 	resolver.add("^GET /note/$", noteGet, 0)
 	resolver.add("^GET /note/create/$", noteCreate, 0)
 	resolver.add("^GET /note/delete/$", noteDelete, 0)
+}
+
+func pingHandler(c *gin.Context) {
+	var token common.Token
+	token.Value = c.Param("id")
+	c.JSON(200, token)
 }
 
 // GetContextReader получить канал куда отправляются контексты

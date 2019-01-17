@@ -25,22 +25,16 @@ func parseContext(ctx common.Context, xdb common.Db) {
 	switch ctx.GetCmdCode() {
 	case common.NotesListCmd:
 		handlers.NotesList(ctx, xdb)
-		break
 	case common.GetNoteCmd:
 		handlers.NoteGet(ctx, xdb)
-		break
 	case common.CreateNoteCmd:
 		handlers.CreateNote(ctx, xdb)
-		break
 	case common.DeleteNoteCmd:
 		handlers.DeleteNote(ctx, xdb)
-		break
 
 	case common.UserCreateCmd:
 		handlers.UserCreate(ctx, xdb)
-		break
 	case common.UserTokenGetCmd:
 		handlers.TokenGet(ctx, xdb)
-		break
 	}
 }
