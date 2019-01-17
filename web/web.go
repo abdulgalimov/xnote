@@ -26,13 +26,11 @@ const (
 var channel common.ContextReader
 var resolver *httpResolver
 
-var xdb common.Db
-
 // Init инициализировать пакет
 func Init(db common.Db) {
-	xdb = db
 	channel = make(common.ContextReader, 10)
 	resolver = &httpResolver{
+		db:       db,
 		handlers: make(map[string]handlerFunc),
 		flags:    make(map[string]int),
 		cache:    make(map[string]*regexp.Regexp),
@@ -61,6 +59,7 @@ func Start() {
 type handlerFunc func(ctx *context)
 
 type httpResolver struct {
+	db       common.Db
 	handlers map[string]handlerFunc
 	flags    map[string]int
 	cache    map[string]*regexp.Regexp
@@ -111,7 +110,7 @@ func (r *httpResolver) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 			ctx.req = req
 
 			if flags&flagNoUser == 0 {
-				if !loadUser(&ctx) {
+				if !r.loadUser(&ctx) {
 					return
 				}
 				ctx.reqID = fmt.Sprintf("%d-%s", ctx.GetUserID(), check)
@@ -122,7 +121,7 @@ func (r *httpResolver) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 				turns.add(ctx.reqID)
 			}
 			if flags&flagNoToken == 0 {
-				if !loadToken(&ctx) {
+				if !r.loadToken(&ctx) {
 					return
 				}
 			}
@@ -134,7 +133,7 @@ func (r *httpResolver) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	http.NotFound(res, req)
 }
 
-func loadUser(ctx *context) bool {
+func (r *httpResolver) loadUser(ctx *context) bool {
 	userIDStr := ctx.GetParam("user_id")
 	userID, _ := strconv.Atoi(userIDStr)
 	if userID <= 0 {
@@ -144,7 +143,7 @@ func loadUser(ctx *context) bool {
 
 	ctx.userID = userID
 	//
-	user, _ := xdb.Users().Find(ctx.userID)
+	user, _ := r.db.Users().Find(ctx.userID)
 	if user == nil {
 		ctx.SetError(errorInvalidUserID)
 		return false
@@ -153,13 +152,13 @@ func loadUser(ctx *context) bool {
 	return true
 }
 
-func loadToken(ctx *context) bool {
+func (r *httpResolver) loadToken(ctx *context) bool {
 	tokenValue := ctx.GetParam("token")
 	if tokenValue == "" {
 		ctx.SetError(errorInvalidToken)
 		return false
 	}
-	token := xdb.Tokens().FindByValue(tokenValue)
+	token := r.db.Tokens().FindByValue(tokenValue)
 	if token == nil || token.UserID != ctx.GetUserID() {
 		ctx.SetError(errorInvalidToken)
 		return false
