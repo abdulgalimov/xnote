@@ -7,7 +7,7 @@ import (
 
 func notesList(ctx *context) {
 	ctx.cmdCode = common.NotesListCmd
-	ctx.text = ctx.GetParam("find_text")
+	ctx.text = ctx.getParam("find_text")
 	parsePages(ctx)
 	dropContext(ctx)
 
@@ -24,7 +24,7 @@ func notesList(ctx *context) {
 }
 
 func noteGet(ctx *context) {
-	noteIDStr := ctx.GetParam("note_id")
+	noteIDStr := ctx.getParam("note_id")
 	noteID, _ := strconv.Atoi(noteIDStr)
 	if noteID <= 0 {
 		ctx.SetError(errorInvalidNoteID)
@@ -40,7 +40,7 @@ func noteGet(ctx *context) {
 }
 
 func noteCreate(ctx *context) {
-	text := ctx.GetParam("text")
+	text := ctx.getParam("text")
 	if text == "" {
 		ctx.SetError(errorInvalidText)
 		return
@@ -55,7 +55,7 @@ func noteCreate(ctx *context) {
 }
 
 func noteDelete(ctx *context) {
-	noteIDStr := ctx.GetParam("note_id")
+	noteIDStr := ctx.getParam("note_id")
 	noteID, _ := strconv.Atoi(noteIDStr)
 	if noteID <= 0 {
 		ctx.SetError(errorInvalidNoteID)

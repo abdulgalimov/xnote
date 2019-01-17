@@ -37,7 +37,7 @@ type context struct {
 	completeChan chan bool
 }
 
-func (ctx *context) GetParam(key string) string {
+func (ctx *context) getParam(key string) string {
 	return ctx.req.URL.Query().Get(key)
 }
 

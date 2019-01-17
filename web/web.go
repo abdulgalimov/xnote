@@ -134,7 +134,7 @@ func (r *httpResolver) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 }
 
 func (r *httpResolver) loadUser(ctx *context) bool {
-	userIDStr := ctx.GetParam("user_id")
+	userIDStr := ctx.getParam("user_id")
 	userID, _ := strconv.Atoi(userIDStr)
 	if userID <= 0 {
 		ctx.SetError(errorInvalidUserID)
@@ -153,7 +153,7 @@ func (r *httpResolver) loadUser(ctx *context) bool {
 }
 
 func (r *httpResolver) loadToken(ctx *context) bool {
-	tokenValue := ctx.GetParam("token")
+	tokenValue := ctx.getParam("token")
 	if tokenValue == "" {
 		ctx.SetError(errorInvalidToken)
 		return false
@@ -168,13 +168,13 @@ func (r *httpResolver) loadToken(ctx *context) bool {
 }
 
 func parsePages(ctx *context) {
-	countOnPageStr := ctx.GetParam("countOnPage")
+	countOnPageStr := ctx.getParam("countOnPage")
 	if countOnPageStr != "" {
 		countOnPage, err := strconv.Atoi(countOnPageStr)
 		if err != nil {
 			return
 		}
-		pageNumStr := ctx.GetParam("pageNum")
+		pageNumStr := ctx.getParam("pageNum")
 		var pageNum = 0
 		if pageNumStr != "" {
 			pageNum, err = strconv.Atoi(pageNumStr)
